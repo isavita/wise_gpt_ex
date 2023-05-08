@@ -8,7 +8,7 @@ WiseGPTEx is an Elixir library that utilizes OpenAI's GPT-3.5-turbo model to pro
 ```elixir
 def deps do
   [
-    {:wise_gpt_ex, "~> 0.1.0"}
+    {:wise_gpt_ex, "~> 0.1.1"}
   ]
 end
 ```
@@ -18,7 +18,7 @@ end
 config :wise_gpt_ex, :openai_api_key, "your_openai_api_key"
 ```
 
-# Usage
+## Usage
 
 To use WiseGPTEx, simply call the get_best_completion/2 function with a question and optional list of options:
 ```elixir
@@ -31,7 +31,7 @@ opts = [model: "gpt-4", temperature: 0.4, num_completions: 4, timeout: 300_000]
 {:ok, response} = WiseGPTEx.get_best_completion("What is the capital of France?", opts)
 ```
 
-# Options
+## Options
 The following options can be passed to the get_best_completion/2 function:
 
 - `:model` - The name of the OpenAI model to use (default: "gpt-3.5-turbo").

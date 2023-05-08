@@ -5,6 +5,22 @@ defmodule WiseGPTEx do
   This module provides a function to obtain the best completion from the OpenAI models (default: "gpt-3.5-turbo") using the OpenAI API completions endpoint (`https://api.openai.com/v1/chat/completions`).
   The `get_best_completion/2` function takes a question and an optional list of options to configure the API request.
 
+  ## Installation
+
+  1. Add `wise_gpt_ex` to your list of dependencies in `mix.exs`:
+  ```elixir
+  def deps do
+    [
+      {:wise_gpt_ex, "~> 0.1.0"}
+    ]
+  end
+  ```
+
+  2. Add the OpenAI API key to your configuration file (e.g., config/config.exs):
+  ```elixir
+  config :wise_gpt_ex, :openai_api_key, "your_openai_api_key"
+  ```
+
   ## Examples
 
   Basic usage:
