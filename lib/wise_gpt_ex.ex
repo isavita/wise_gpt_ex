@@ -1,8 +1,33 @@
 defmodule WiseGPTEx do
   @moduledoc """
   Documentation for `WiseGPTEx`.
-  """
 
+  This module provides a function to obtain the best completion from the OpenAI models (default: "gpt-3.5-turbo") using the OpenAI API completions endpoint (`https://api.openai.com/v1/chat/completions`).
+  The `get_best_completion/2` function takes a question and an optional list of options to configure the API request.
+
+  ## Examples
+
+  Basic usage:
+
+      iex> WiseGPTEx.get_best_completion("What is the capital of France?")
+      {:ok, "Paris"}
+
+  Using all available options:
+
+      iex> opts = [model: "gpt-4", temperature: 0.7, num_completions: 5, timeout: 300_000]
+      iex> WiseGPTEx.get_best_completion("What is the capital of France?", opts)
+      {:ok, "Paris"}
+
+  ## Options
+
+  The following options can be passed to the `get_best_completion/2` function:
+
+    * `:model` - The name of the model to use (default: "gpt-3.5-turbo"). All OpenAI models are supported.
+    * `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
+    * `:num_completions` - The number of completions to generate (default: 3).
+    * `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 300_000 ms, or 5 minutes).
+
+  """
   alias WiseGPTEx.OpenAIHTTPClient
 
   @spec get_best_completion(binary(), Keyword.t()) :: {:ok, binary()} | {:error, any()}

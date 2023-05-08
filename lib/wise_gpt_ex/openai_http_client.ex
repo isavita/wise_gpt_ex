@@ -1,4 +1,15 @@
 defmodule WiseGPTEx.OpenAIHTTPClient do
+  @moduledoc """
+  Documentation for `WiseGPTEx.OpenAIHTTPClient`.
+
+  This module contains functions to interact with the OpenAI API to get completions with reasoning and determine the best completion. It is used internally by the `WiseGPTEx` module and is not intended to be called directly by users.
+
+  The main functions in this module are:
+
+    * `get_completions_with_reasoning/2` - Retrieves completions with reasoning from the OpenAI API based on a given message and an optional list of options.
+    * `get_best_completion/3` - Determines the best completion from a list of completions and an optional list of options.
+
+  """
   @openai_completions_api_url "https://api.openai.com/v1/chat/completions"
   @default_model "gpt-3.5-turbo"
   @default_temperature 0.5

@@ -1,6 +1,10 @@
 defmodule WiseGPTEx.MixProject do
   use Mix.Project
 
+  @version "0.1.0"
+  @docs_url "http://hexdocs.pm/wise_gpt_ex"
+  @github_url "https://github.com/isavita/wise_gpt_ex"
+
   def project do
     [
       app: :wise_gpt_ex,
@@ -8,7 +12,10 @@ defmodule WiseGPTEx.MixProject do
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      package: package()
+      package: package(),
+      description: description(),
+      name: "WiseGPTEx",
+      source_url: @github_url
     ]
   end
 
@@ -28,12 +35,20 @@ defmodule WiseGPTEx.MixProject do
     ]
   end
 
+  defp description do
+    "WiseGPTEx is a smart Elixir library that employs GPT-4/GPT-3.5-turbo for advanced question answering. It generates multiple answers, leveraging a chain of thoughts approach to select the best response."
+  end
+
   defp package do
     [
-      files: ["lib", "mix.exs", "README.md"],
+      name: "wise_gpt_ex",
+      files: ["lib", "mix.exs", "README.md", "LICENSE"],
       maintainers: ["Aleksandar Dimov"],
       licenses: ["Apache-2.0"],
-      links: %{"GitHub" => "https://github.com/isavita/wise_gpt_ex"}
+      links: %{
+        "Docs" => @docs_url,
+        "GitHub" => @github_url
+      }
     ]
   end
 end
