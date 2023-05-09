@@ -131,4 +131,51 @@ defmodule WiseGPTEx.OpenAIHTTPClientTest do
                OpenAIHTTPClient.get_best_completion("456 * 23421", ["A", "B", "C"])
     end
   end
+
+  describe "get_resolver_completion/3" do
+    @get_resolver_completion %HTTPoison.Response{
+      status_code: 200,
+      body:
+        "{\"id\":\"chatcmpl-XX4\",\"object\":\"chat.completion\",\"created\":1683648350,\"model\":\"gpt-3.5-turbo-0301\",\"usage\":{\"prompt_tokens\":2195,\"completion_tokens\":161,\"total_tokens\":2356},\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"Answer Option 1 and 2 are incorrect, as they solve a different problem involving the multiplication of 37 and 89122, not 456 and 23421. \\n\\nAnswer Option 3 is closer to the correct answer, but it contains errors in the partial products. To improve the answer, we can use the standard long multiplication algorithm, which is more efficient and less prone to errors. \\n\\nHere is the improved solution using the long multiplication algorithm:\\n\\n```\\n   456\\n x23421\\n -------\\n  31992  (6 x 1)\\n 364560  (5 x 56)\\n1822800  (4 x 421)\\n---------\\n10649876  (total)\\n```\\n\\nTherefore, 456 multiplied by 23421 equals 10,649,876.\"},\"finish_reason\":\"stop\",\"index\":0}]}\n",
+      headers: [],
+      request_url: "https://api.openai.com/v1/chat/completions",
+      request: %HTTPoison.Request{
+        method: :post,
+        url: "https://api.openai.com/v1/chat/completions",
+        headers: [],
+        body: "...",
+        params: %{},
+        options: []
+      }
+    }
+    test "returns the best completion generated base on the previous completions" do
+      expect(HTTPoison.BaseMock, :post!, fn url, payload, _headers, _opts ->
+        assert url == "https://api.openai.com/v1/chat/completions"
+        assert {:ok, payload} = Jason.decode(payload)
+        assert payload["model"] == "gpt-3.5-turbo"
+        assert payload["temperature"] == 0.5
+
+        assert [
+                 %{"content" => "" <> _, "role" => "user"},
+                 %{"content" => "" <> _, "role" => "assistant"},
+                 %{"content" => "" <> _, "role" => "user"},
+                 %{"content" => "" <> _, "role" => "assistant"},
+                 %{
+                   "content" =>
+                     "You are a resolver tasked with 1) finding which of the X answer options was best 2) improving that answer, and 3) printing the improved answer in full. Let's work this out in step by step way to be sure we have the right answer:",
+                   "role" => "user"
+                 }
+               ] = payload["messages"]
+
+        @get_resolver_completion
+      end)
+
+      assert {:ok, "" <> _comp} =
+               OpenAIHTTPClient.get_resolver_completion(
+                 "456 * 23421",
+                 ["A", "B", "C"],
+                 "Correct Answer: Option 2"
+               )
+    end
+  end
 end
