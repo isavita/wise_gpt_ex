@@ -46,7 +46,7 @@ defmodule WiseGPTEx do
 
   ## Options
 
-  The following options can be passed to the get_best_completion/2 and get_best_completion_with_resolver/2 functions:
+  The following options can be passed to the `get_best_completion/2` and `get_best_completion_with_resolver/2` functions:
 
     * `:model` - The name of the model to use (default: "gpt-3.5-turbo"). All OpenAI models are supported.
     * `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).

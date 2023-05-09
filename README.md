@@ -36,7 +36,7 @@ This is because the difference between these two functions is in the method of h
 The `get_best_completion_with_resolver/2` function will perform an additional API call to get a more accurate completion, which can be beneficial for complex or ambiguous queries.
 
 ## Options
-The following options can be passed to the get_best_completion/2 function:
+The following options can be passed to the `get_best_completion/2` function:
 
 - `:model` - The name of the OpenAI model to use (default: "gpt-3.5-turbo").
 - `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
