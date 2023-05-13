@@ -27,7 +27,7 @@ To use WiseGPTEx, simply call the `get_best_completion/2` or `get_best_completio
 
 You can also pass options to customize the API request:
 ```elixir
-opts = [model: "gpt-4", temperature: 0.4, num_completions: 4, timeout: 300_000]
+opts = [model: "gpt-4", temperature: 0.4, num_completions: 4, timeout: 3_600_000]
 {:ok, response} = WiseGPTEx.get_best_completion_with_resolver("What is the capital of France?", opts)
 ```
 
@@ -41,4 +41,4 @@ The following options can be passed to the `get_best_completion/2` function:
 - `:model` - The name of the OpenAI model to use (default: "gpt-3.5-turbo").
 - `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
 - `:num_completions` - The number of completions to generate (default: 3).
-- `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 300_000 ms, or 5 minutes).
+- `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 3_600_000 ms, or 60 minutes).

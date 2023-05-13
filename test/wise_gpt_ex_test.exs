@@ -37,7 +37,7 @@ defmodule WiseGPTExTest do
         options: []
       }
     }
-    test "get_best_completion/2 returns the best completion based on success_resp" do
+    test "returns the best completion based on success_resp" do
       expect(HTTPoison.BaseMock, :post!, fn _url,
                                             "{\"messages\":[{\"content\":\"Question: ..." <> _ =
                                               payload,
@@ -103,10 +103,10 @@ defmodule WiseGPTExTest do
   end
 
   describe "get_best_completion_with_resolver" do
-    @get_resolver_completion %HTTPoison.Response{
+    @get_resolver_completion_resp %HTTPoison.Response{
       status_code: 200,
       body:
-        "{\"id\":\"chatcmpl-XX4\",\"object\":\"chat.completion\",\"created\":1683648350,\"model\":\"gpt-3.5-turbo-0301\",\"usage\":{\"prompt_tokens\":2195,\"completion_tokens\":161,\"total_tokens\":2356},\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"Answer Option 1 and 2 are incorrect, as they solve a different problem involving the multiplication of 37 and 89122, not 456 and 23421. \\n\\nAnswer Option 3 is closer to the correct answer, but it contains errors in the partial products. To improve the answer, we can use the standard long multiplication algorithm, which is more efficient and less prone to errors. \\n\\nHere is the improved solution using the long multiplication algorithm:\\n\\n```\\n   456\\n x23421\\n -------\\n  31992  (6 x 1)\\n 364560  (5 x 56)\\n1822800  (4 x 421)\\n---------\\n10649876  (total)\\n```\\n\\nTherefore, 456 multiplied by 23421 equals 10,649,876.\"},\"finish_reason\":\"stop\",\"index\":0}]}\n",
+        "{\"id\":\"chatcmpl-XX4\",\"object\":\"chat.completion\",\"created\":1683648350,\"model\":\"gpt-3.5-turbo-0301\",\"usage\":{\"prompt_tokens\":2195,\"completion_tokens\":161,\"total_tokens\":2356},\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"Answer Option 1 and 2 are incorrect,\\n\\n<|answerstart|>Therefore, 456 multiplied by 23421 equals 10,649,876.\"},\"finish_reason\":\"stop\",\"index\":0}]}\n",
       headers: [],
       request_url: "https://api.openai.com/v1/chat/completions",
       request: %HTTPoison.Request{
@@ -119,9 +119,9 @@ defmodule WiseGPTExTest do
       }
     }
 
-    test "" do
+    test "returns the completion given by the resolver" do
       expect(HTTPoison.BaseMock, :post!, fn _url,
-                                            "{\"messages\":[{\"content\":\"Question: ..." <> _ =
+                                            "{\"messages\":[{\"content\":\"Question: " <> _ =
                                               _payload,
                                             _headers,
                                             _opts ->
@@ -136,7 +136,7 @@ defmodule WiseGPTExTest do
         @get_resolver_completion_resp
       end)
 
-      {:ok, @get_resolver_completion_resp} =
+      {:ok, "Therefore, 456 multiplied by 23421 equals 10,649,876."} =
         WiseGPTEx.get_best_completion_with_resolver("", model: "gpt-3.5-turbo-0301")
     end
   end

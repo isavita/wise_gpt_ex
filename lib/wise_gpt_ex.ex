@@ -33,7 +33,7 @@ defmodule WiseGPTEx do
 
   Using all available options:
 
-      iex> opts = [model: "gpt-4", temperature: 0.7, num_completions: 5, timeout: 300_000]
+      iex> opts = [model: "gpt-4", temperature: 0.7, num_completions: 5, timeout: 3_600_000]
       iex> WiseGPTEx.get_best_completion("What is the capital of France?", opts)
       {:ok, "Paris"}
 
@@ -51,10 +51,11 @@ defmodule WiseGPTEx do
     * `:model` - The name of the model to use (default: "gpt-3.5-turbo"). All OpenAI models are supported.
     * `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
     * `:num_completions` - The number of completions to generate (default: 3).
-    * `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 300_000 ms, or 5 minutes).
+    * `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 3_600_000 ms, or 60 minutes).
 
   """
   alias WiseGPTEx.OpenAIHTTPClient
+  alias WiseGPTEx.OpenAIUtils
 
   @doc """
   `get_best_completion/2` attempts to answer a given question using OpenAI's completion endpoint.
@@ -80,7 +81,7 @@ defmodule WiseGPTEx do
   - `:model` - The name of the model to use (default: "gpt-3.5-turbo"). All OpenAI models are supported.
   - `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
   - `:num_completions` - The number of completions to generate (default: 3).
-  - `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 300_000 ms, or 5 minutes).
+  - `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 3_600_000 ms, or 60 minutes).
   """
   @spec get_best_completion(binary(), Keyword.t()) :: {:ok, binary()} | {:error, any()}
   def get_best_completion(_question, _opts \\ [])
@@ -140,9 +141,10 @@ defmodule WiseGPTEx do
   - `:model` - The name of the model to use (default: "gpt-3.5-turbo"). All OpenAI models are supported.
   - `:temperature - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
   - `:num_completions` - The number of completions to generate (default: 3).
-  - `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 300_000 ms, or 5 minutes).
+  - `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 3_600_000 ms, or 60 minutes).
   """
-  @spec get_best_completion_with_resolver(binary(), Keyword.t()) :: {:ok, binary()} | {:error, any()}
+  @spec get_best_completion_with_resolver(binary(), Keyword.t()) ::
+          {:ok, binary()} | {:error, any()}
   def get_best_completion_with_resolver(_question, _opts \\ [])
 
   def get_best_completion_with_resolver(question, opts) when is_binary(question) do
@@ -150,8 +152,15 @@ defmodule WiseGPTEx do
            OpenAIHTTPClient.get_completions_with_reasoning(question, opts),
          {:ok, best_completion_info} <-
            OpenAIHTTPClient.get_best_completion(question, completions, opts),
-         {:ok, best_completion} <- OpenAIHTTPClient.get_resolver_completion(question, completions, best_completion_info, opts) do
-      {:ok, best_completion}
+         {:ok, best_completion} <-
+           OpenAIHTTPClient.get_resolver_completion(
+             question,
+             completions,
+             best_completion_info,
+             opts
+           ),
+         best_completion_trimmed <- OpenAIUtils.trim_resolver_answer(best_completion) do
+      {:ok, best_completion_trimmed}
     else
       {:error, reason} -> {:error, reason}
     end

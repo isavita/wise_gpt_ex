@@ -160,11 +160,7 @@ defmodule WiseGPTEx.OpenAIHTTPClientTest do
                  %{"content" => "" <> _, "role" => "assistant"},
                  %{"content" => "" <> _, "role" => "user"},
                  %{"content" => "" <> _, "role" => "assistant"},
-                 %{
-                   "content" =>
-                     "You are a resolver tasked with 1) finding which of the X answer options was best 2) improving that answer, and 3) printing the improved answer in full. Let's work this out in step by step way to be sure we have the right answer:",
-                   "role" => "user"
-                 }
+                 %{"content" => "You are a resolver " <> _, "role" => "user"}
                ] = payload["messages"]
 
         @get_resolver_completion

@@ -10,12 +10,14 @@ defmodule WiseGPTEx.OpenAIHTTPClient do
     * `get_best_completion/3` - Determines the best completion from a list of completions and an optional list of options.
 
   """
+  alias WiseGPTEx.OpenAIUtils, as: Utils
+
   @openai_completions_api_url "https://api.openai.com/v1/chat/completions"
   @default_model "gpt-3.5-turbo"
   @default_temperature 0.5
   @default_num_completions 3
-  # 5 minutes
-  @default_timeout_ms 300_000
+  # 60 minutes
+  @default_timeout_ms 3_600_000
 
   @spec get_completions_with_reasoning(binary(), Keyword.t()) :: {:ok, list()} | {:error, map()}
   def get_completions_with_reasoning(message, opts \\ []) do
@@ -23,7 +25,7 @@ defmodule WiseGPTEx.OpenAIHTTPClient do
     temperature = Keyword.get(opts, :temperature, @default_temperature)
     n = Keyword.get(opts, :num_completions, @default_num_completions)
     timeout = Keyword.get(opts, :timeout, @default_timeout_ms)
-    content = prepare_content_with_reasoning(message)
+    content = Utils.reasoning_prompt(message)
 
     payload =
       %{
@@ -36,17 +38,7 @@ defmodule WiseGPTEx.OpenAIHTTPClient do
       }
       |> Jason.encode!()
 
-    post_completions(payload, timeout, &extract_completions/1)
-  end
-
-  defp prepare_content_with_reasoning(message) do
-    ~s(Question: #{message}\nAnswer: Let's work this out in a step by step way to be sure we have the right answer.)
-  end
-
-  defp extract_completions(body) do
-    for completion <- body["choices"] || [], completion["finish_reason"] == "stop" do
-      completion["message"]["content"]
-    end
+    post_completions(payload, timeout, &Utils.extract_completions/1)
   end
 
   @spec get_best_completion(binary(), list(), Keyword.t()) :: {:ok, binary()} | {:error, any()}
@@ -54,47 +46,23 @@ defmodule WiseGPTEx.OpenAIHTTPClient do
     model = Keyword.get(opts, :model, @default_model)
     temperature = Keyword.get(opts, :temperature, @default_temperature)
     timeout = Keyword.get(opts, :timeout, @default_timeout_ms)
-    message_with_reasoning = prepare_content_with_reasoning(message)
-
-    completions_with_reasoning =
-      completions
-      |> prepare_completion_options()
-      |> Enum.join("\n")
-
-    researcher_prompt = prepare_researcher_prompt(message, completions_with_reasoning)
+    reasoning_prompt = Utils.reasoning_prompt(message)
+    completions_options = Utils.prepare_completion_options(completions)
+    researcher_prompt = Utils.researcher_prompt(message, completions_options)
 
     payload =
       %{
         "model" => model,
         "temperature" => temperature,
         "messages" => [
-          %{"role" => "user", "content" => message_with_reasoning},
-          %{"role" => "assistant", "content" => completions_with_reasoning},
+          %{"role" => "user", "content" => reasoning_prompt},
+          %{"role" => "assistant", "content" => completions_options},
           %{"role" => "user", "content" => researcher_prompt}
         ]
       }
       |> Jason.encode!()
 
-    post_completions(payload, timeout, &extract_completion/1)
-  end
-
-  defp prepare_researcher_prompt(message, completions_with_reasoning) do
-    ~s(#{message}\n\n#{completions_with_reasoning}\n\nYou are researcher tasked with investigating the answer options provided. List the flaws and faulty logic of each answer option. Let's work this out in a step by step way to be sure we have all the errors\n\n**Answer format:**\nCorrect Answer: <Option Number>\n**If there are multiple correct answers, pick the first one.**)
-  end
-
-  defp extract_completion(body) do
-    choice =
-      Enum.find(body["choices"] || [], %{}, fn completion ->
-        completion["finish_reason"] == "stop"
-      end)
-
-    choice["message"]["content"]
-  end
-
-  defp prepare_completion_options(completions) do
-    for {completion, i} <- Enum.with_index(completions, 1) do
-      ~s(Answer Option #{i}: #{completion})
-    end
+    post_completions(payload, timeout, &Utils.extract_completion/1)
   end
 
   @spec get_resolver_completion(binary(), list(), binary(), Keyword.t()) ::
@@ -103,23 +71,18 @@ defmodule WiseGPTEx.OpenAIHTTPClient do
     model = Keyword.get(opts, :model, @default_model)
     temperature = Keyword.get(opts, :temperature, @default_temperature)
     timeout = Keyword.get(opts, :timeout, @default_timeout_ms)
-    message_with_reasoning = prepare_content_with_reasoning(message)
-
-    completions_with_reasoning =
-      completions
-      |> prepare_completion_options()
-      |> Enum.join("\n")
-
-    researcher_prompt = prepare_researcher_prompt(message, completions_with_reasoning)
-    resolver_prompt = prepare_resolver_prompt()
+    reasoning_prompt = Utils.reasoning_prompt(message)
+    completions_options = Utils.prepare_completion_options(completions)
+    researcher_prompt = Utils.researcher_prompt(message, completions_options)
+    resolver_prompt = Utils.resolver_prompt()
 
     payload =
       %{
         "model" => model,
         "temperature" => temperature,
         "messages" => [
-          %{"role" => "user", "content" => message_with_reasoning},
-          %{"role" => "assistant", "content" => completions_with_reasoning},
+          %{"role" => "user", "content" => reasoning_prompt},
+          %{"role" => "assistant", "content" => completions_options},
           %{"role" => "user", "content" => researcher_prompt},
           %{"role" => "assistant", "content" => best_completion},
           %{"role" => "user", "content" => resolver_prompt}
@@ -127,14 +90,10 @@ defmodule WiseGPTEx.OpenAIHTTPClient do
       }
       |> Jason.encode!()
 
-    post_completions(payload, timeout, &extract_completion/1)
+    post_completions(payload, timeout, &Utils.extract_completion/1)
   end
 
-  defp prepare_resolver_prompt do
-    ~s{You are a resolver tasked with 1) finding which of the X answer options was best 2) improving that answer, and 3) printing the improved answer in full. Let's work this out in step by step way to be sure we have the right answer:}
-  end
-
-  defp post_completions(payload, timeout, extract_fn \\ fn x -> x end) do
+  defp post_completions(payload, timeout, extract_fn) do
     case http_client().post!(@openai_completions_api_url, payload, headers(),
            recv_timeout: timeout
          ) do
