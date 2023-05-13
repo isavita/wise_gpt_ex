@@ -1,7 +1,7 @@
 defmodule WiseGPTEx.MixProject do
   use Mix.Project
 
-  @version "0.2.0"
+  @version "0.3.0"
   @docs_url "http://hexdocs.pm/wise_gpt_ex"
   @github_url "https://github.com/isavita/wise_gpt_ex"
 

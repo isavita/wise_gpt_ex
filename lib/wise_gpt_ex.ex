@@ -11,7 +11,7 @@ defmodule WiseGPTEx do
   ```elixir
   def deps do
     [
-      {:wise_gpt_ex, "~> 0.2.0"}
+      {:wise_gpt_ex, "~> 0.3.0"}
     ]
   end
   ```
