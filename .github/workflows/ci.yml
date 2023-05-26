@@ -1,0 +1,18 @@
+name: CI
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Elixir
+        uses: actions/setup-elixir@v1
+        with:
+            elixir-version: 1.14.3
+            otp-version: 25.0
+      - name: Install dependencies
+        run: mix deps.get
+      - name: Check formatting
+        run: mix format --check-formatted
+      - name: Run tests
+        run: mix test
