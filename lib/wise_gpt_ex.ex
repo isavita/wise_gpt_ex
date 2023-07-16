@@ -58,6 +58,41 @@ defmodule WiseGPTEx do
   alias WiseGPTEx.OpenAIUtils
 
   @doc """
+  Gets a raw completion from the OpenAI API without additional prompting.
+
+  ## Params:
+  - `messages`: A list of messages to send to the API. Each message should be a map with keys "role" and "content", for example:
+  ```elixir
+      iex> messages = [
+      ...>   %{"role" => "system", "content" => "You are High School Geography Teacher"},
+      ...>   %{"role" => "user", "content" => "What was the capital of France in 15th century?"}
+      ...> ]
+  ```
+  - `opts`: a keyword list of options to configure the API request
+
+  ## Returns:
+  - `{:ok, binary()}`: the completion for the given question
+  - `{:error, any()}`: an error message in the case of failure
+
+  This allows you to customize the conversation sent to the API without any additional prompting added.
+
+  ## Example:
+
+  ```elixir
+      iex> messages = [
+      ...>   %{"role" => "system", "content" => "You are High School Geography Teacher"},
+      ...>   %{"role" => "user", "content" => "What was the capital of France in 15th century?"}
+      ...> ]
+      ...> WiseGPTEx.get_raw_completion(messages)
+      {:ok, "The capital of France in the 15th century was Paris."}
+  ```
+  """
+  @spec get_raw_completion(list(map()), Keyword.t()) :: {:ok, binary()} | {:error, any()}
+  def get_raw_completion(messages, opts \\ []) do
+    OpenAIHTTPClient.get_raw_completion(messages, opts)
+  end
+
+  @doc """
   `get_best_completion/2` attempts to answer a given question using OpenAI's completion endpoint.
 
   ## Params:

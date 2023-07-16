@@ -8,7 +8,9 @@ defmodule WiseGPTEx.OpenAIHTTPClient do
 
     * `get_completions_with_reasoning/2` - Retrieves completions with reasoning from the OpenAI API based on a given message and an optional list of options.
     * `get_best_completion/3` - Determines the best completion from a list of completions and an optional list of options.
+    * `get_raw_completion/2` - Gets a raw completion from the API based on given messages, without additional prompting.
 
+    **NOTE:**  `get_raw_completion/2` allows sending custom conversations with both role and content to the API, while the other functions add extra prompting to request reasoning, disambiguation, etc.
   """
   alias WiseGPTEx.OpenAIUtils, as: Utils
 
@@ -18,6 +20,23 @@ defmodule WiseGPTEx.OpenAIHTTPClient do
   @default_num_completions 3
   # 60 minutes
   @default_timeout_ms 3_600_000
+
+  @spec get_raw_completion(list(map()), Keyword.t()) :: {:ok, binary()} | {:error, any()}
+  def get_raw_completion(messages, opts \\ []) do
+    model = Keyword.get(opts, :model, @default_model)
+    temperature = Keyword.get(opts, :temperature, @default_temperature)
+    timeout = Keyword.get(opts, :timeout, @default_timeout_ms)
+
+    payload =
+      %{
+        "model" => model,
+        "temperature" => temperature,
+        "messages" => messages
+      }
+      |> Jason.encode!()
+
+    post_completions(payload, timeout, &Utils.extract_completion/1)
+  end
 
   @spec get_completions_with_reasoning(binary(), Keyword.t()) :: {:ok, list()} | {:error, map()}
   def get_completions_with_reasoning(message, opts \\ []) do
