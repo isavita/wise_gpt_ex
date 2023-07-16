@@ -6,6 +6,49 @@ defmodule WiseGPTEx.OpenAIHTTPClientTest do
   import Mox
   setup :verify_on_exit!
 
+  describe "get_raw_completion/1" do
+    @success_resp %HTTPoison.Response{
+      status_code: 200,
+      body:
+        "{\n  \"id\": \"chatcmpl-7ctGZpJTEEGq8XfzwpWRF8Ph1e0ZA\",\n  \"object\": \"chat.completion\",\n  \"created\": 1689503263,\n  \"model\": \"gpt-3.5-turbo-0613\",\n  \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\": \"assistant\",\n        \"content\": \"The capital of France in the 15th century was Paris.\"\n      },\n      \"finish_reason\": \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 29,\n    \"completion_tokens\": 13,\n    \"total_tokens\": 42\n  }\n}\n",
+      headers: [],
+      request_url: "https://api.openai.com/v1/chat/completions",
+      request: %HTTPoison.Request{
+        method: :post,
+        url: "https://api.openai.com/v1/chat/completions",
+        headers: [],
+        body:
+          "{\"messages\":[{\"content\":\"You are High School Geography Teacher\",\"role\":\"system\"},{\"content\":\"What was the capital of France in 15th century?\",\"role\":\"user\"}],\"model\":\"gpt-3.5-turbo\",\"temperature\":0.5}",
+        params: %{},
+        options: []
+      }
+    }
+    test "returns the completion" do
+      messages = [
+        %{"role" => "system", "content" => "You are High School Geography Teacher"},
+        %{"role" => "user", "content" => "What was the capital of France in 15th century?"}
+      ]
+
+      expect(HTTPoison.BaseMock, :post!, fn url, payload, headers, _opts ->
+        assert url == "https://api.openai.com/v1/chat/completions"
+        assert {:ok, payload} = Jason.decode(payload)
+        assert payload["model"] == "gpt-3.5-turbo"
+        assert payload["temperature"] == 0.5
+        assert payload["messages"] == messages
+
+        assert Enum.any?(headers, fn
+                 {"authorization", "Bearer " <> _} -> true
+                 _ -> false
+               end)
+
+        @success_resp
+      end)
+
+      assert {:ok, completion} = OpenAIHTTPClient.get_raw_completion(messages)
+      assert completion == "The capital of France in the 15th century was Paris."
+    end
+  end
+
   describe "get_completions_with_reasoning/1" do
     @success_resp %HTTPoison.Response{
       status_code: 200,

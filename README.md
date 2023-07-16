@@ -31,9 +31,19 @@ opts = [model: "gpt-4", temperature: 0.4, num_completions: 4, timeout: 3_600_000
 {:ok, response} = WiseGPTEx.get_best_completion_with_resolver("What is the capital of France?", opts)
 ```
 
+You can also make a raw call to the OpenAI API using the `get_raw_completion/2` function:
+```elixir
+messages = [
+  %{"role" => "system", "content" => "You are High School Geography Teacher"},
+  %{"role" => "user", "content" => "What was the capital of France in 15th century?"}
+]
+{ok, response} = WiseGPTEx.get_raw_completion(messages, [model: "gpt-4", temperature: 0.75, timeout: 3_600])
+```
+
 Note that the `get_best_completion_with_resolver/2` function is similar to `get_best_completion/2`.
 This is because the difference between these two functions is in the method of how they select the best completion, not in their usage or the nature of their inputs or outputs.
 The `get_best_completion_with_resolver/2` function will perform an additional API call to get a more accurate completion, which can be beneficial for complex or ambiguous queries.
+The `get_raw_completion/2` function allows sending a custom conversation to the API without any additional prompting or setting the up the system role etc. This is useful when you want direct access to the model's system messages.
 
 ## Options
 The following options can be passed to the `get_best_completion/2` function:
