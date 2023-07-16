@@ -8,7 +8,7 @@ WiseGPTEx is an Elixir library that utilizes OpenAI's GPT-3.5-turbo model to pro
 ```elixir
 def deps do
   [
-    {:wise_gpt_ex, "~> 0.3.0"}
+    {:wise_gpt_ex, "~> 0.4.0"}
   ]
 end
 ```
