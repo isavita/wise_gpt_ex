@@ -31,6 +31,15 @@ defmodule WiseGPTEx do
       iex> WiseGPTEx.get_best_completion_with_resolver("What is the capital of France?")
       {:ok, "Paris"}
 
+  Using a raw completion:
+
+      iex> messages = [
+      ...>   %{"role" => "system", "content" => "You are High School Geography Teacher"},
+      ...>   %{"role" => "user", "content" => "What was the capital of France in 15th century?"}
+      ...> ]
+      ...> WiseGPTEx.get_raw_completion(messages)
+      {:ok, "The capital of France in the 15th century was Paris."}
+
   Using all available options:
 
       iex> opts = [model: "gpt-4", temperature: 0.7, num_completions: 5, timeout: 3_600_000]
