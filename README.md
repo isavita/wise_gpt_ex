@@ -63,5 +63,5 @@ For interactions with the Anthropic API, use the get_anthropic_completion/2 func
 
 - `:model` - The version of the Claude model to use (default: "claude-2").
 - `:temperature` - Controls the randomness of the model's output (default: 0.1).
-- `:max_tokens_to_sample` - Maximum number of tokens to generate (default: 8,000).
+- `:max_tokens_to_sample` - Maximum number of tokens to generate (default: 100,000).
 - `:timeout` - Maximum time in milliseconds to wait for a response (default: 3,600,000 ms, or 60 minutes).
