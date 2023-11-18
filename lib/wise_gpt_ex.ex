@@ -11,7 +11,7 @@ defmodule WiseGPTEx do
   ```elixir
   def deps do
     [
-      {:wise_gpt_ex, "~> 0.4.0"}
+      {:wise_gpt_ex, "~> 0.5.0"}
     ]
   end
   ```
@@ -20,6 +20,12 @@ defmodule WiseGPTEx do
   ```elixir
   config :wise_gpt_ex, :openai_api_key, "your_openai_api_key"
   ```
+
+  3. Add the Anthropic API key to your configuration file (e.g., config/config.exs):
+  ```elixir
+  config :wise_gpt_ex, :anthropic_api_key, "your_anthropic_api_key"
+  ```
+
 
   ## Examples
 
@@ -53,6 +59,11 @@ defmodule WiseGPTEx do
   This is because the difference between these two functions is in the method of how they select the best completion, not in their usage or the nature of their inputs or outputs.
   The `get_best_completion_with_resolver/2` function will perform an additional API call to get a more accurate completion, which can be beneficial for complex or ambiguous queries.
 
+  Anthropic API usage:
+
+      iex> WiseGPTEx.get_anthropic_completion("Why is the sky blue?")
+      {:ok, "The sky is blue because... [detailed explanation]"}
+
   ## Options
 
   The following options can be passed to the `get_best_completion/2` and `get_best_completion_with_resolver/2` functions:
@@ -62,7 +73,15 @@ defmodule WiseGPTEx do
     * `:num_completions` - The number of completions to generate (default: 3).
     * `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 3_600_000 ms, or 60 minutes).
 
+  For `get_anthropic_completion/2`, the following options can be passed:
+
+    * `:model` - The version of the Claude model to use (default: "claude-2").
+    * `:temperature` - Controls the randomness of the model's output (default: 0.1).
+    * `:max_tokens_to_sample` - Maximum number of tokens to generate (default: 8,000).
+    * `:timeout` - Maximum time in milliseconds to wait for a response (default: 3,600,000 ms, or 60 minutes).
+
   """
+  alias WiseGPTEx.AnthropicHTTPClient
   alias WiseGPTEx.OpenAIHTTPClient
   alias WiseGPTEx.OpenAIUtils
 
@@ -212,4 +231,29 @@ defmodule WiseGPTEx do
 
   def get_best_completion_with_resolver(_question, _opts),
     do: {:error, "the input must be a string"}
+
+  @doc """
+  Retrieves a completion from the Anthropic API using the Claude model.
+
+  ## Params:
+  - `message`: A string containing the prompt or question.
+  - `opts`: A keyword list of options to configure the API request.
+
+  ## Returns:
+  - `{:ok, binary()}`: The completion for the given prompt.
+  - `{:error, any()}`: An error message in case of failure.
+
+  This function provides a direct way to interact with the Anthropic API, allowing for detailed control over the completion request.
+
+  ## Example:
+
+  ```elixir
+  iex> WiseGPTEx.get_anthropic_completion("Why is the sky blue?")
+  {:ok, "The sky is blue because... [detailed explanation]"}
+  ```
+  """
+  @spec get_anthropic_completion(binary(), Keyword.t()) :: {:ok, binary()} | {:error, any()}
+  def get_anthropic_completion(message, opts \\ []) do
+    AnthropicHTTPClient.complete(message, opts)
+  end
 end

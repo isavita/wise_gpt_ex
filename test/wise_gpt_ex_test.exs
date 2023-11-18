@@ -140,4 +140,61 @@ defmodule WiseGPTExTest do
         WiseGPTEx.get_best_completion_with_resolver("", model: "gpt-3.5-turbo-0301")
     end
   end
+
+  describe "get_anthropic_completion/2" do
+    @anthropic_success_resp %HTTPoison.Response{
+      status_code: 200,
+      body:
+        "{\"completion\":\"The sky is blue because of the way sunlight interacts with Earth's atmosphere.\",\"stop\":\"\\n\\nHuman:\",\"stop_reason\":\"length\",\"model\":\"claude-2\"}",
+      headers: [],
+      request_url: "https://api.anthropic.com/v1/complete",
+      request: %HTTPoison.Request{
+        method: :post,
+        url: "https://api.anthropic.com/v1/complete",
+        headers: [],
+        body: "{\"model\":\"claude-2\",\"prompt\":\"Why is the sky blue?\"}",
+        params: %{},
+        options: []
+      }
+    }
+
+    test "handles successful response from Anthropic API" do
+      expect(HTTPoison.BaseMock, :post!, fn _url, _payload, _headers, _opts ->
+        @anthropic_success_resp
+      end)
+
+      assert {:ok,
+              "The sky is blue because of the way sunlight interacts with Earth's atmosphere."} =
+               WiseGPTEx.get_anthropic_completion("Why is the sky blue?")
+    end
+
+    @anthropic_error_resp %HTTPoison.Response{
+      status_code: 401,
+      body: "{\"error\":{\"message\":\"Unauthorized access\",\"type\":\"authentication_error\"}}",
+      headers: [],
+      request_url: "https://api.anthropic.com/v1/complete",
+      request: %HTTPoison.Request{
+        method: :post,
+        url: "https://api.anthropic.com/v1/complete",
+        headers: [],
+        body: "{\"model\":\"claude-2\",\"prompt\":\"Why is the sky blue?\"}",
+        params: %{},
+        options: []
+      }
+    }
+
+    test "handles error response from Anthropic API" do
+      expect(HTTPoison.BaseMock, :post!, fn _url, _payload, _headers, _opts ->
+        @anthropic_error_resp
+      end)
+
+      assert {:error,
+              %{
+                "error" => %{
+                  "message" => "Unauthorized access",
+                  "type" => "authentication_error"
+                }
+              }} = WiseGPTEx.get_anthropic_completion("Why is the sky blue?")
+    end
+  end
 end
