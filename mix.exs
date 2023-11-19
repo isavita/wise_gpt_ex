@@ -1,7 +1,7 @@
 defmodule WiseGPTEx.MixProject do
   use Mix.Project
 
-  @version "0.5.0"
+  @version "0.6.0"
   @docs_url "http://hexdocs.pm/wise_gpt_ex"
   @github_url "https://github.com/isavita/wise_gpt_ex"
 
@@ -15,7 +15,8 @@ defmodule WiseGPTEx.MixProject do
       package: package(),
       description: description(),
       name: "WiseGPTEx",
-      source_url: @github_url
+      source_url: @github_url,
+      docs: docs()
     ]
   end
 
@@ -50,6 +51,16 @@ defmodule WiseGPTEx.MixProject do
         "Docs" => @docs_url,
         "GitHub" => @github_url
       }
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      logo: "logo.png",
+      source_url: @github_url,
+      source_ref: "v#{@version}",
+      extras: ["README.md"]
     ]
   end
 end

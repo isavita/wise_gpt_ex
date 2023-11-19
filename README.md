@@ -8,7 +8,7 @@ WiseGPTEx is an Elixir library that utilizes OpenAI's GPT-3.5-turbo model and An
 ```elixir
 def deps do
   [
-    {:wise_gpt_ex, "~> 0.5.0"}
+    {:wise_gpt_ex, "~> 0.6.0"}
   ]
 end
 ```
@@ -19,7 +19,7 @@ config :wise_gpt_ex, :openai_api_key, "your_openai_api_key"
 config :wise_gpt_ex, :anthropic_api_key, "your_anthropic_api_key"
 ```
 
-## Usage (OpenAI API)
+## Usage (only with OpenAI API)
 
 To use WiseGPTEx, simply call the `get_best_completion/2` or `get_best_completion_with_resolver/2` function with a question and optional list of options:
 ```elixir
@@ -32,23 +32,32 @@ opts = [model: "gpt-4", temperature: 0.4, num_completions: 4, timeout: 3_600_000
 {:ok, response} = WiseGPTEx.get_best_completion_with_resolver("What is the capital of France?", opts)
 ```
 
-You can also make a raw call to the OpenAI API using the `get_raw_completion/2` function:
+You can also make a raw call to the OpenAI API using the `openai_completion/2` function:
 ```elixir
 messages = [
   %{"role" => "system", "content" => "You are High School Geography Teacher"},
   %{"role" => "user", "content" => "What was the capital of France in 15th century?"}
 ]
-{ok, response} = WiseGPTEx.get_raw_completion(messages, [model: "gpt-4", temperature: 0.75, timeout: 3_600])
+{ok, response} = WiseGPTEx.openai_completion(messages, [model: "gpt-4", temperature: 0.75, timeout: 3_600])
 ```
 
 Note that the `get_best_completion_with_resolver/2` function is similar to `get_best_completion/2`.
 This is because the difference between these two functions is in the method of how they select the best completion, not in their usage or the nature of their inputs or outputs.
 The `get_best_completion_with_resolver/2` function will perform an additional API call to get a more accurate completion, which can be beneficial for complex or ambiguous queries.
-The `get_raw_completion/2` function allows sending a custom conversation to the API without any additional prompting or setting the up the system role etc. This is useful when you want direct access to the model's system messages.
+The `openai_completion/2` function allows sending a custom conversation to the API without any additional prompting or setting the up the system role etc. This is useful when you want direct access to the model's system messages.
 
+## OpenAI API
+For interactions with the OpenAI API, use the `openai_completion/1` function:
+```elixir
+{:ok, response} = WiseGPTEx.openai_completion("What is the capital of France?")
+{:ok, "Paris"}
+```
 ## Anthropic API
-For interactions with the Anthropic API, use the get_anthropic_completion/2 function:
-{:ok, response} = WiseGPTEx.get_anthropic_completion("Why is the sky blue?")
+For interactions with the Anthropic API, use the `anthropic_completion/1` function:
+```elixir
+{:ok, response} = WiseGPTEx.anthropic_completion("Why is the sky blue?")
+{:ok, "The sky is blue because of the way sunlight interacts with Earth's atmosphere."}
+```
 
 ## Options
 

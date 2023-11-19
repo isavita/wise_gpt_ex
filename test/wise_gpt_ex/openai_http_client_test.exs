@@ -3,7 +3,7 @@ defmodule WiseGPTEx.OpenAIHTTPClientTest do
   import Mock
   alias WiseGPTEx.OpenAIHTTPClient
 
-  describe "get_raw_completion/1" do
+  describe "openai_completion/1" do
     @success_resp %{
       status_code: 200,
       body:
@@ -30,7 +30,7 @@ defmodule WiseGPTEx.OpenAIHTTPClientTest do
 
           @success_resp
         end do
-        assert {:ok, completion} = OpenAIHTTPClient.get_raw_completion(messages)
+        assert {:ok, completion} = OpenAIHTTPClient.completion(messages)
         assert completion == "The capital of France in the 15th century was Paris."
       end
     end

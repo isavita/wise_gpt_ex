@@ -5,28 +5,6 @@ defmodule WiseGPTEx do
   This module provides functions to obtain the best completion from the OpenAI models (default: "gpt-3.5-turbo") using the OpenAI API completions endpoint (`https://api.openai.com/v1/chat/completions`).
   The `get_best_completion/2` and `get_best_completion_with_resolver/2` functions take a question and an optional list of options to configure the API request. `get_best_completion_with_resolver/2` also involves a secondary step to resolve the best completion among the options, which leads to an additional API call for a more accurate response.
 
-  ## Installation
-
-  1. Add `wise_gpt_ex` to your list of dependencies in `mix.exs`:
-  ```elixir
-  def deps do
-    [
-      {:wise_gpt_ex, "~> 0.5.0"}
-    ]
-  end
-  ```
-
-  2. Add the OpenAI API key to your configuration file (e.g., config/config.exs):
-  ```elixir
-  config :wise_gpt_ex, :openai_api_key, "your_openai_api_key"
-  ```
-
-  3. Add the Anthropic API key to your configuration file (e.g., config/config.exs):
-  ```elixir
-  config :wise_gpt_ex, :anthropic_api_key, "your_anthropic_api_key"
-  ```
-
-
   ## Examples
 
   Basic usage:
@@ -43,7 +21,7 @@ defmodule WiseGPTEx do
       ...>   %{"role" => "system", "content" => "You are High School Geography Teacher"},
       ...>   %{"role" => "user", "content" => "What was the capital of France in 15th century?"}
       ...> ]
-      ...> WiseGPTEx.get_raw_completion(messages)
+      ...> WiseGPTEx.openai_completion(messages)
       {:ok, "The capital of France in the 15th century was Paris."}
 
   Using all available options:
@@ -61,7 +39,7 @@ defmodule WiseGPTEx do
 
   Anthropic API usage:
 
-      iex> WiseGPTEx.get_anthropic_completion("Why is the sky blue?")
+      iex> WiseGPTEx.anthropic_completion("Why is the sky blue?")
       {:ok, "The sky is blue because... [detailed explanation]"}
 
   ## Options
@@ -73,7 +51,7 @@ defmodule WiseGPTEx do
     * `:num_completions` - The number of completions to generate (default: 3).
     * `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 3_600_000 ms, or 60 minutes).
 
-  For `get_anthropic_completion/2`, the following options can be passed:
+  For `anthropic_completion/2`, the following options can be passed:
 
     * `:model` - The version of the Claude model to use (default: "claude-2").
     * `:temperature` - Controls the randomness of the model's output (default: 0.1).
@@ -111,13 +89,13 @@ defmodule WiseGPTEx do
       ...>   %{"role" => "system", "content" => "You are High School Geography Teacher"},
       ...>   %{"role" => "user", "content" => "What was the capital of France in 15th century?"}
       ...> ]
-      ...> WiseGPTEx.get_raw_completion(messages)
+      ...> WiseGPTEx.openai_completion(messages)
       {:ok, "The capital of France in the 15th century was Paris."}
   ```
   """
-  @spec get_raw_completion(list(map()), Keyword.t()) :: {:ok, binary()} | {:error, any()}
-  def get_raw_completion(messages, opts \\ []) do
-    OpenAIHTTPClient.get_raw_completion(messages, opts)
+  @spec openai_completion(list(map()), Keyword.t()) :: {:ok, binary()} | {:error, any()}
+  def openai_completion(messages, opts \\ []) do
+    OpenAIHTTPClient.completion(messages, opts)
   end
 
   @doc """
@@ -248,12 +226,12 @@ defmodule WiseGPTEx do
   ## Example:
 
   ```elixir
-  iex> WiseGPTEx.get_anthropic_completion("Why is the sky blue?")
+  iex> WiseGPTEx.anthropic_completion("Why is the sky blue?")
   {:ok, "The sky is blue because... [detailed explanation]"}
   ```
   """
-  @spec get_anthropic_completion(binary(), Keyword.t()) :: {:ok, binary()} | {:error, any()}
-  def get_anthropic_completion(message, opts \\ []) do
+  @spec anthropic_completion(binary(), Keyword.t()) :: {:ok, binary()} | {:error, any()}
+  def anthropic_completion(message, opts \\ []) do
     AnthropicHTTPClient.complete(message, opts)
   end
 end

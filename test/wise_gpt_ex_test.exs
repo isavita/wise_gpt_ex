@@ -88,7 +88,7 @@ defmodule WiseGPTExTest do
     end
   end
 
-  describe "get_anthropic_completion/2" do
+  describe "anthropic_completion/2" do
     @anthropic_success_resp %{
       status_code: 200,
       body:
@@ -102,7 +102,7 @@ defmodule WiseGPTExTest do
         end do
         assert {:ok,
                 "The sky is blue because of the way sunlight interacts with Earth's atmosphere."} =
-                 WiseGPTEx.get_anthropic_completion("Why is the sky blue?")
+                 WiseGPTEx.anthropic_completion("Why is the sky blue?")
       end
     end
 
@@ -122,7 +122,7 @@ defmodule WiseGPTExTest do
                     "message" => "Unauthorized access",
                     "type" => "authentication_error"
                   }
-                }} = WiseGPTEx.get_anthropic_completion("Why is the sky blue?")
+                }} = WiseGPTEx.anthropic_completion("Why is the sky blue?")
       end
     end
   end
