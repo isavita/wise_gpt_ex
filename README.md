@@ -60,7 +60,7 @@ For interactions with the Anthropic API, use the `anthropic_completion/1` functi
 {:ok, "The sky is blue because of the way sunlight interacts with Earth's atmosphere."}
 ```
 ## Mistral API
-For interactions with the Mistral API, use the mistral_completion/2 function:
+For interactions with the Mistral API, use the `mistral_completion/1` function:
 ```elixir
 {:ok, response} = WiseGPTEx.mistral_completion("What is the best French cheese?")
 {:ok, "The best French cheese is..."}
