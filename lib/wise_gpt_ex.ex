@@ -2,8 +2,9 @@ defmodule WiseGPTEx do
   @moduledoc """
   Documentation for `WiseGPTEx`.
 
-  This module provides functions to obtain the best completion from the OpenAI models (default: "gpt-3.5-turbo") using the OpenAI API completions endpoint (`https://api.openai.com/v1/chat/completions`).
-  The `get_best_completion/2` and `get_best_completion_with_resolver/2` functions take a question and an optional list of options to configure the API request. `get_best_completion_with_resolver/2` also involves a secondary step to resolve the best completion among the options, which leads to an additional API call for a more accurate response.
+  This module provides functions to obtain the best completion from various language models including OpenAI (default: "gpt-3.5-turbo"), Anthropic, and Mistral, using their respective API endpoints.
+
+  Key functions include `get_best_completion/2`, `get_best_completion_with_resolver/2`, `openai_completion/2`, `anthropic_completion/2`, and `mistral_completion/2`. Each function is tailored to interact with a specific API, offering a range of options for customizing the request and handling the response.
 
   ## Examples
 
@@ -42,6 +43,13 @@ defmodule WiseGPTEx do
       iex> WiseGPTEx.anthropic_completion("Why is the sky blue?")
       {:ok, "The sky is blue because... [detailed explanation]"}
 
+  Mistral API usage:
+      iex> messages = "What is the best French cheese?"
+      iex> WiseGPTEx.mistral_completion(messages)
+      {:ok, "The best French cheese is..."}
+
+  For more detailed examples and options for each function, refer to the individual function documentation.
+
   ## Options
 
   The following options can be passed to the `get_best_completion/2` and `get_best_completion_with_resolver/2` functions:
@@ -60,6 +68,7 @@ defmodule WiseGPTEx do
 
   """
   alias WiseGPTEx.AnthropicHTTPClient
+  alias WiseGPTEx.MistralHTTPClient
   alias WiseGPTEx.OpenAIHTTPClient
   alias WiseGPTEx.OpenAIUtils
 
@@ -233,5 +242,27 @@ defmodule WiseGPTEx do
   @spec anthropic_completion(binary(), Keyword.t()) :: {:ok, binary()} | {:error, any()}
   def anthropic_completion(message, opts \\ []) do
     AnthropicHTTPClient.complete(message, opts)
+  end
+
+   @doc """
+  Retrieves a completion from the Mistral API.
+
+  ## Params
+  - `messages`: A list of messages forming the conversation context for the completion. Each message should be a map with keys "role" (either 'user' or 'system') and "content" for the text.
+  - `opts`: A keyword list of options to configure the API request. Options include `:model`, `:temperature`, `:top_p`, `:max_tokens`, `:stream`, `:safe_mode`, and `:random_seed`.
+
+  ## Returns
+  - `{:ok, binary()}`: The completion for the given context.
+  - `{:error, any()}`: An error message in case of failure.
+
+  ## Example
+  ```elixir
+  iex> message = "What is the best French cheese?"
+  iex> WiseGPTEx.mistral_completion(message)
+  {:ok,"It's difficult to declare one type of French cheese as the \"best\" since preferences for cheese can vary greatly from person to person. However, some of the most well-known and highly regarded French cheeses include Brie, Camembert, Comté, Roquefort, and Époisses. Ultimately, the best French cheese is a matter of personal taste."}
+  """
+  @spec mistral_completion(binary(), Keyword.t()) :: {:ok, binary()} | {:error, any()}
+  def mistral_completion(message, opts \\ []) do
+    MistralHTTPClient.complete(message, opts)
   end
 end

@@ -1,6 +1,6 @@
 # WiseGPTEx
 
-WiseGPTEx is an Elixir library that utilizes OpenAI's GPT-3.5-turbo model and Anthropic's Claude model to provide intelligent question answering, reasoning capabilities, and AI-generated text completions.
+WiseGPTEx is an Elixir library that integrates with various language models, including OpenAI's GPT-3.5-turbo, Anthropic's Claude model, and Mistral's AI model. It provides intelligent question answering, reasoning capabilities, and AI-generated text completions across these platforms.
 
 ## Installation
 
@@ -8,15 +8,16 @@ WiseGPTEx is an Elixir library that utilizes OpenAI's GPT-3.5-turbo model and An
 ```elixir
 def deps do
   [
-    {:wise_gpt_ex, "~> 0.6.0"}
+    {:wise_gpt_ex, "~> 0.7.0"}
   ]
 end
 ```
 
-2. Add the OpenAI and Anthropic API keys to your configuration file (e.g., config/config.exs):
+2. Add the OpenAI, Anthropic, and Mistral API keys to your configuration file (e.g., config/config.exs):
 ```elixir
 config :wise_gpt_ex, :openai_api_key, "your_openai_api_key"
 config :wise_gpt_ex, :anthropic_api_key, "your_anthropic_api_key"
+config :wise_gpt_ex, :mistral_api_key, "your_mistral_api_key"
 ```
 
 ## Usage (only with OpenAI API)
@@ -58,6 +59,12 @@ For interactions with the Anthropic API, use the `anthropic_completion/1` functi
 {:ok, response} = WiseGPTEx.anthropic_completion("Why is the sky blue?")
 {:ok, "The sky is blue because of the way sunlight interacts with Earth's atmosphere."}
 ```
+## Mistral API
+For interactions with the Mistral API, use the mistral_completion/2 function:
+```elixir
+{:ok, response} = WiseGPTEx.mistral_completion("What is the best French cheese?")
+{:ok, "The best French cheese is..."}
+```
 
 ## Options
 
@@ -74,3 +81,14 @@ For interactions with the Anthropic API, use the `anthropic_completion/1` functi
 - `:temperature` - Controls the randomness of the model's output (default: 0.1).
 - `:max_tokens_to_sample` - Maximum number of tokens to generate (default: 100,000).
 - `:timeout` - Maximum time in milliseconds to wait for a response (default: 3,600,000 ms, or 60 minutes).
+
+## Options for the Mistral API function:
+
+- `:model` - The version of the Mistral model to use.
+- `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses.
+- `:top_p` - Nucleus sampling parameter, controlling the token selection process.
+- `:max_tokens` - The maximum number of tokens to generate for the completion.
+- `:stream` - Whether to stream back partial progress of the completion.
+- `:safe_mode` - Whether to enable content moderation features.
+- `:random_seed` - An optional seed for deterministic results.
+- `:timeout` - Maximum time in milliseconds to wait for a response.
