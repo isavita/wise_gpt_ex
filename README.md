@@ -84,11 +84,11 @@ For interactions with the Mistral API, use the `mistral_completion/1` function:
 
 ## Options for the Mistral API function:
 
-- `:model` - The version of the Mistral model to use.
-- `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses.
-- `:top_p` - Nucleus sampling parameter, controlling the token selection process.
-- `:max_tokens` - The maximum number of tokens to generate for the completion.
-- `:stream` - Whether to stream back partial progress of the completion.
-- `:safe_mode` - Whether to enable content moderation features.
-- `:random_seed` - An optional seed for deterministic results.
-- `:timeout` - Maximum time in milliseconds to wait for a response.
+- `:model` - The version of the Mistral model to use (default: "mistral-small").
+- `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
+- `:top_p` - Nucleus sampling parameter, controlling the token selection process (default: 1).
+- `:max_tokens` - The maximum number of tokens to generate for the completion (default: 32,000).
+- `:stream` - Whether to stream back partial progress of the completion (default: false).
+- `:safe_mode` - Whether to enable content moderation features (default: false).
+- `:random_seed` - An optional seed for deterministic results (default: nil).
+- `:timeout` - Maximum time in milliseconds to wait for a response (default: 600,000 ms, or 10 minutes).
