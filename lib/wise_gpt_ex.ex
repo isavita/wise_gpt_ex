@@ -244,7 +244,7 @@ defmodule WiseGPTEx do
     AnthropicHTTPClient.complete(message, opts)
   end
 
-   @doc """
+  @doc """
   Retrieves a completion from the Mistral API.
 
   ## Params
