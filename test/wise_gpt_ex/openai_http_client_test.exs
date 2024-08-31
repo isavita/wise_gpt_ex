@@ -19,7 +19,7 @@ defmodule WiseGPTEx.OpenAIHTTPClientTest do
         post!: fn url, payload, headers, _opts ->
           assert url == "https://api.openai.com/v1/chat/completions"
           assert {:ok, payload} = Jason.decode(payload)
-          assert payload["model"] == "gpt-3.5-turbo"
+          assert payload["model"] == "gpt-4o-mini"
           assert payload["temperature"] == 0.5
           assert payload["messages"] == messages
 
@@ -46,7 +46,7 @@ defmodule WiseGPTEx.OpenAIHTTPClientTest do
       with_mock HTTPoison,
         post!: fn "https://api.openai.com/v1/chat/completions", payload, headers, _opts ->
           payload = Jason.decode!(payload)
-          assert payload["model"] == "gpt-3.5-turbo"
+          assert payload["model"] == "gpt-4o-mini"
           assert payload["temperature"] == 0.5
           assert payload["n"] == 3
 
@@ -104,7 +104,7 @@ defmodule WiseGPTEx.OpenAIHTTPClientTest do
       with_mock HTTPoison,
         post!: fn "https://api.openai.com/v1/chat/completions", payload, _headers, _opts ->
           payload = Jason.decode!(payload)
-          assert payload["model"] == "gpt-3.5-turbo"
+          assert payload["model"] == "gpt-4o-mini"
           assert payload["temperature"] == 0.5
 
           assert [
@@ -141,7 +141,7 @@ defmodule WiseGPTEx.OpenAIHTTPClientTest do
       with_mock HTTPoison,
         post!: fn "https://api.openai.com/v1/chat/completions", payload, _headers, _opts ->
           assert {:ok, payload} = Jason.decode(payload)
-          assert payload["model"] == "gpt-3.5-turbo"
+          assert payload["model"] == "gpt-4o-mini"
           assert payload["temperature"] == 0.5
 
           assert [

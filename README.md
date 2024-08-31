@@ -66,44 +66,23 @@ For interactions with the Mistral API, use the `mistral_completion/1` function:
 {:ok, "The best French cheese is..."}
 ```
 
-## Options
-
-### Options for the OpenAI API functions:
-
-- `:model` - The name of the OpenAI model to use (default: "gpt-3.5-turbo").
-- `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
-- `:num_completions` - The number of completions to generate (default: 3).
-- `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 3_600_000 ms, or 60 minutes).
-
-### Options for the Anthropic API function:
-
-- `:model` - The version of the Claude model to use (default: "claude-2").
-- `:temperature` - Controls the randomness of the model's output (default: 0.1).
-- `:max_tokens_to_sample` - Maximum number of tokens to generate (default: 100,000).
-- `:timeout` - Maximum time in milliseconds to wait for a response (default: 3,600,000 ms, or 60 minutes).
-
-## Options for the Mistral API function:
-
-- `:model` - The version of the Mistral model to use (default: "mistral-small").
-- `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
-- `:top_p` - Nucleus sampling parameter, controlling the token selection process (default: 1).
-- `:max_tokens` - The maximum number of tokens to generate for the completion (default: 32,000).
-- `:stream` - Whether to stream back partial progress of the completion (default: false).
-- `:safe_mode` - Whether to enable content moderation features (default: false).
-- `:random_seed` - An optional seed for deterministic results (default: nil).
-- `:timeout` - Maximum time in milliseconds to wait for a response (default: 600,000 ms, or 10 minutes).
-
 ## Groq API
 For interactions with the Groq API, use the `groq_completion/2` function:
 ```elixir
-messages
+messages = [
+  %{"role" => "system", "content" => "You are a helpful assistant."},
+  %{"role" => "user", "content" => "What's the capital of France?"}
+]
+{:ok, response} = WiseGPTEx.groq_completion(messages)
+{:ok,
+ "The capital of France is Paris. Paris is a major European city and a global center for art, fashion, gastronomy, and culture. It is also the most populous city in France and the largest city in the European Union."}
 ```
 
 ## Options
 
 ### Options for the OpenAI API functions:
 
-- `:model` - The name of the OpenAI model to use (default: "gpt-3.5-turbo").
+- `:model` - The name of the OpenAI model to use (default: "gpt-4o-mini").
 - `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
 - `:num_completions` - The number of completions to generate (default: 3).
 - `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 3_600_000 ms, or 60 minutes).
@@ -115,7 +94,7 @@ messages
 - `:max_tokens_to_sample` - Maximum number of tokens to generate (default: 100,000).
 - `:timeout` - Maximum time in milliseconds to wait for a response (default: 3,600,000 ms, or 60 minutes).
 
-## Options for the Mistral API function:
+### Options for the Mistral API function:
 
 - `:model` - The version of the Mistral model to use (default: "mistral-small").
 - `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
@@ -125,3 +104,18 @@ messages
 - `:safe_mode` - Whether to enable content moderation features (default: false).
 - `:random_seed` - An optional seed for deterministic results (default: nil).
 - `:timeout` - Maximum time in milliseconds to wait for a response (default: 600,000 ms, or 10 minutes).
+
+### Options for the Groq API function:
+
+- `:model` - The version of the Groq model to use (default: "mixtral-8x7b-32768").
+- `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.7).
+- `:max_tokens` - The maximum number of tokens to generate for the completion (default: 32,000).
+- `:top_p` - Nucleus sampling parameter, controlling the token selection process (default: 1).
+- `:top_k` - Limits the number of token choices for each step (default: nil).
+- `:stream` - Whether to stream back partial progress of the completion (default: false).
+- `:stop` - A list of strings that, when encountered, will stop the generation (default: nil).
+- `:timeout` - Maximum time in milliseconds to wait for a response (default: 600,000 ms, or 10 minutes).
+
+## License
+
+WiseGPTEx is licensed under the Apache License, Version 2.0. See the LICENSE file for more details.

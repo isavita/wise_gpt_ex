@@ -15,7 +15,7 @@ defmodule WiseGPTEx.OpenAIHTTPClient do
   alias WiseGPTEx.OpenAIUtils, as: Utils
 
   @openai_completions_api_url "https://api.openai.com/v1/chat/completions"
-  @default_model "gpt-3.5-turbo"
+  @default_model "gpt-4o-mini"
   @default_temperature 0.5
   @default_num_completions 3
   # 60 minutes

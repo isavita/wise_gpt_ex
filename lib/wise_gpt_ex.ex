@@ -2,7 +2,7 @@ defmodule WiseGPTEx do
   @moduledoc """
   Documentation for `WiseGPTEx`.
 
-  This module provides functions to obtain the best completion from various language models including OpenAI (default: "gpt-3.5-turbo"), Anthropic, and Mistral, using their respective API endpoints.
+  This module provides functions to obtain the best completion from various language models including OpenAI (default: "gpt-4o-mini"), Anthropic, and Mistral, using their respective API endpoints.
 
   Key functions include `get_best_completion/2`, `get_best_completion_with_resolver/2`, `openai_completion/2`, `anthropic_completion/2`, and `mistral_completion/2`. Each function is tailored to interact with a specific API, offering a range of options for customizing the request and handling the response.
 
@@ -59,7 +59,7 @@ defmodule WiseGPTEx do
 
   The following options can be passed to the `get_best_completion/2` and `get_best_completion_with_resolver/2` functions:
 
-    * `:model` - The name of the model to use (default: "gpt-3.5-turbo"). All OpenAI models are supported.
+    * `:model` - The name of the model to use (default: "gpt-4o-mini"). All OpenAI models are supported.
     * `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
     * `:num_completions` - The number of completions to generate (default: 3).
     * `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 3_600_000 ms, or 60 minutes).
@@ -134,7 +134,7 @@ defmodule WiseGPTEx do
   ## Options:
   The function accepts the following options:
 
-  - `:model` - The name of the model to use (default: "gpt-3.5-turbo"). All OpenAI models are supported.
+  - `:model` - The name of the model to use (default: "gpt-4o-mini"). All OpenAI models are supported.
   - `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
   - `:num_completions` - The number of completions to generate (default: 3).
   - `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 3_600_000 ms, or 60 minutes).
@@ -194,7 +194,7 @@ defmodule WiseGPTEx do
   ## Options:
   The function accepts the following options:
 
-  - `:model` - The name of the model to use (default: "gpt-3.5-turbo"). All OpenAI models are supported.
+  - `:model` - The name of the model to use (default: "gpt-4o-mini"). All OpenAI models are supported.
   - `:temperature - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
   - `:num_completions` - The number of completions to generate (default: 3).
   - `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 3_600_000 ms, or 60 minutes).
