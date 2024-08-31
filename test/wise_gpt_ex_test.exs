@@ -126,4 +126,78 @@ defmodule WiseGPTExTest do
       end
     end
   end
+
+  describe "groq_completion/2" do
+    @groq_success_resp %HTTPoison.Response{
+      status_code: 200,
+      body:
+        Jason.encode!(%{
+          "id" => "34a9110d-c39d-423b-9ab9-9c748747b204",
+          "object" => "chat.completion",
+          "created" => 1_708_045_122,
+          "model" => "mixtral-8x7b-32768",
+          "system_fingerprint" => nil,
+          "choices" => [
+            %{
+              "index" => 0,
+              "message" => %{
+                "role" => "assistant",
+                "content" =>
+                  "Low latency Large Language Models (LLMs) are important in the field of artificial intelligence and natural language processing (NLP) for several reasons: ..."
+              },
+              "finish_reason" => "stop",
+              "logprobs" => nil
+            }
+          ],
+          "usage" => %{
+            "prompt_tokens" => 24,
+            "completion_tokens" => 377,
+            "total_tokens" => 401,
+            "prompt_time" => 0.009,
+            "completion_time" => 0.774,
+            "total_time" => 0.783
+          }
+        })
+    }
+
+    test "handles successful response from Groq API" do
+      with_mock HTTPoison,
+        post: fn _url, _payload, _headers, _opts ->
+          {:ok, @groq_success_resp}
+        end do
+        assert {:ok, completion} =
+                 WiseGPTEx.groq_completion([
+                   %{
+                     "role" => "user",
+                     "content" => "Explain the importance of fast language models"
+                   }
+                 ])
+
+        assert completion =~ "Low latency Large Language Models (LLMs) are important"
+      end
+    end
+
+    @groq_error_resp %HTTPoison.Response{
+      status_code: 400,
+      body:
+        Jason.encode!(%{
+          "error" => %{
+            "message" => "Invalid request",
+            "type" => "invalid_request_error",
+            "param" => nil,
+            "code" => nil
+          }
+        })
+    }
+
+    test "handles error response from Groq API" do
+      with_mock HTTPoison,
+        post: fn _url, _payload, _headers, _opts ->
+          {:ok, @groq_error_resp}
+        end do
+        assert {:error, %{status: 400, message: "Invalid request"}} =
+                 WiseGPTEx.groq_completion([%{"role" => "user", "content" => "Invalid request"}])
+      end
+    end
+  end
 end

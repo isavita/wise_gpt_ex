@@ -48,6 +48,11 @@ defmodule WiseGPTEx do
       iex> WiseGPTEx.mistral_completion(messages)
       {:ok, "The best French cheese is..."}
 
+  Groq API usage:
+      iex> messages = [%{"role" => "user", "content" => "Hello, Groq!"}]
+      iex> WiseGPTEx.groq_completion(messages)
+      {:ok, "This is a test response from Groq."}
+
   For more detailed examples and options for each function, refer to the individual function documentation.
 
   ## Options
@@ -71,6 +76,7 @@ defmodule WiseGPTEx do
   alias WiseGPTEx.MistralHTTPClient
   alias WiseGPTEx.OpenAIHTTPClient
   alias WiseGPTEx.OpenAIUtils
+  alias WiseGPTEx.GroqHTTPClient
 
   @doc """
   Gets a raw completion from the OpenAI API without additional prompting.
@@ -264,5 +270,27 @@ defmodule WiseGPTEx do
   @spec mistral_completion(binary(), Keyword.t()) :: {:ok, binary()} | {:error, any()}
   def mistral_completion(message, opts \\ []) do
     MistralHTTPClient.complete(message, opts)
+  end
+
+  @doc """
+  Retrieves a completion from the Groq API.
+
+  ## Params
+  - `messages`: A list of messages forming the conversation context for the completion.
+  - `opts`: A keyword list of options to configure the API request.
+
+  ## Returns
+  - `{:ok, binary()}`: The completion for the given context.
+  - `{:error, any()}`: An error message in case of failure.
+
+  ## Example
+  ```elixir
+  iex> messages = [%{"role" => "user", "content" => "Hello, Groq!"}]
+  iex> WiseGPTEx.groq_completion(messages)
+  {:ok, "This is a test response from Groq."}
+  """
+  @spec groq_completion(list(map()), Keyword.t()) :: {:ok, binary()} | {:error, any()}
+  def groq_completion(messages, opts \\ []) do
+    GroqHTTPClient.complete(messages, opts)
   end
 end

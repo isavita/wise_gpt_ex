@@ -8,7 +8,7 @@ WiseGPTEx is an Elixir library that integrates with various language models, inc
 ```elixir
 def deps do
   [
-    {:wise_gpt_ex, "~> 0.7.0"}
+    {:wise_gpt_ex, "~> 0.8.0"}
   ]
 end
 ```
@@ -64,6 +64,39 @@ For interactions with the Mistral API, use the `mistral_completion/1` function:
 ```elixir
 {:ok, response} = WiseGPTEx.mistral_completion("What is the best French cheese?")
 {:ok, "The best French cheese is..."}
+```
+
+## Options
+
+### Options for the OpenAI API functions:
+
+- `:model` - The name of the OpenAI model to use (default: "gpt-3.5-turbo").
+- `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
+- `:num_completions` - The number of completions to generate (default: 3).
+- `:timeout` - The maximum time in milliseconds to wait for a response from the OpenAI API (default: 3_600_000 ms, or 60 minutes).
+
+### Options for the Anthropic API function:
+
+- `:model` - The version of the Claude model to use (default: "claude-2").
+- `:temperature` - Controls the randomness of the model's output (default: 0.1).
+- `:max_tokens_to_sample` - Maximum number of tokens to generate (default: 100,000).
+- `:timeout` - Maximum time in milliseconds to wait for a response (default: 3,600,000 ms, or 60 minutes).
+
+## Options for the Mistral API function:
+
+- `:model` - The version of the Mistral model to use (default: "mistral-small").
+- `:temperature` - Controls the randomness of the model's output. Higher values result in more diverse responses (default: 0.5).
+- `:top_p` - Nucleus sampling parameter, controlling the token selection process (default: 1).
+- `:max_tokens` - The maximum number of tokens to generate for the completion (default: 32,000).
+- `:stream` - Whether to stream back partial progress of the completion (default: false).
+- `:safe_mode` - Whether to enable content moderation features (default: false).
+- `:random_seed` - An optional seed for deterministic results (default: nil).
+- `:timeout` - Maximum time in milliseconds to wait for a response (default: 600,000 ms, or 10 minutes).
+
+## Groq API
+For interactions with the Groq API, use the `groq_completion/2` function:
+```elixir
+messages
 ```
 
 ## Options
