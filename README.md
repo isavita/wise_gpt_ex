@@ -18,6 +18,7 @@ end
 config :wise_gpt_ex, :openai_api_key, "your_openai_api_key"
 config :wise_gpt_ex, :anthropic_api_key, "your_anthropic_api_key"
 config :wise_gpt_ex, :mistral_api_key, "your_mistral_api_key"
+config :wise_gpt_ex, :groq_api_key, "your_groq_api_key"
 ```
 
 ## Usage (only with OpenAI API)
